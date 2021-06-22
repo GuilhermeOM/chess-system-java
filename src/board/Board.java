@@ -1,3 +1,9 @@
+/*
+    Gera o tabuleiro que possui linhas, colunas e peças, onde as peças serão um
+    array bidimensional. Assim, a movimentação será passada para o array,
+    modificando a posição da peça.
+*/
+
 package board;
 
 public class Board {
@@ -23,5 +29,13 @@ public class Board {
     }
     public int getColumns(){
         return columns;
+    }
+    
+    public Piece piece(int row, int column){
+        return pieces[row][column];
+    }
+    
+    public Piece piece(Position position){
+        return pieces[position.getRow()][position.getColumn()];
     }
 }

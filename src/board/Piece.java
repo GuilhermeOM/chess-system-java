@@ -1,3 +1,8 @@
+/*
+    Gera uma peça que será colocada no tabuleiro, porém quando é gerado uma, 
+    ela não terá local no tabuleiro. Assim recebe posição igual a null.
+*/
+
 package board;
 
 public class Piece {
