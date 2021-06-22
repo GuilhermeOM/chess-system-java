@@ -1,8 +1,3 @@
-/*
-    Define as posições do tabuleiro. (linha e coluna)
-*/
-
-
 package board;
 
 public class Position {

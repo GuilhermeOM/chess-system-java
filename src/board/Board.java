@@ -1,9 +1,3 @@
-/*
-    Gera o tabuleiro que possui linhas, colunas e peças, onde as peças serão um
-    array bidimensional. Assim, a movimentação será passada para o array,
-    modificando a posição da peça.
-*/
-
 package board;
 
 public class Board {
