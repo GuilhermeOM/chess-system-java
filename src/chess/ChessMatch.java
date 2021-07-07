@@ -5,11 +5,21 @@ import board.Piece;
 import board.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private Board board;
+    
+    /*
+    Letting it be a Piece type instead of ChessPiece in order to let it be more generic, 
+    thus the list will be able to accept any type of piece.
+    */
+    private List<Piece> piecesOnTheBoard = new ArrayList<>(); //List of all pieces on the board
+    private List<Piece> capturedPieces = new ArrayList<>(); //List of all captured pieces
+    
     
     public ChessMatch(){
         board = new Board(8, 8);
@@ -44,10 +54,6 @@ public class ChessMatch {
         return board.piece(position).possibleMoves();
     }
     
-    private void placeNewPiece(char column, int row, ChessPiece piece){
-        board.placePiece(piece, new ChessPosition(column, row).toPosition());
-    }
-    
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
         Position source = sourcePosition.toPosition();
         Position target = targetPosition.toPosition();
@@ -60,9 +66,19 @@ public class ChessMatch {
     }
     
     private Piece makeMove(Position source, Position target){
-        Piece p = board.removePiece(source);
-        Piece capturedPiece = board.removePiece(target);
+        //take the piece from the board
+        Piece p = board.removePiece(source); 
+        
+        //in case there is a piece on the target position, it'll be taken
+        Piece capturedPiece = board.removePiece(target); 
+        
+        //then I place mine there.
         board.placePiece(p, target);
+        
+        if(capturedPiece != null){
+            piecesOnTheBoard.remove(capturedPiece);
+            capturedPieces.add(capturedPiece);
+        }
         
         return capturedPiece;
     }
@@ -88,6 +104,13 @@ public class ChessMatch {
     private void nextTurn(){
         turn++;
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+    
+    private void placeNewPiece(char column, int row, ChessPiece piece){
+        board.placePiece(piece, new ChessPosition(column, row).toPosition());
+        
+        //add all instantiated pieces to the list
+        piecesOnTheBoard.add(piece);
     }
     
     private void initialSetup(){
