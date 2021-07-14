@@ -14,6 +14,7 @@ public class ChessMatch {
     private Color currentPlayer;
     private Board board;
     private boolean check;
+    private boolean checkmate;
     
     /*
     Letting it be a Piece type instead of ChessPiece in order to let it be more generic, 
@@ -41,6 +42,10 @@ public class ChessMatch {
      
     public boolean getCheck(){
         return check;
+    }
+    
+    public boolean getCheckmate(){
+        return checkmate;
     }
     
     public ChessPiece[][] getPieces(){
@@ -75,7 +80,13 @@ public class ChessMatch {
         //Checks if the match is in check or not;
         check = (testCheck(opponent(currentPlayer))) ? true : false;
         
-        nextTurn();
+        if(testCheckMate(opponent(currentPlayer))){
+            checkmate = true;
+        }
+        else{
+            nextTurn();
+        }
+        
         return (ChessPiece) capturedPiece;
     }
     
@@ -166,6 +177,41 @@ public class ChessMatch {
         }
         return false;
     }
+    
+    private boolean testCheckMate(Color color){
+        if(!testCheck(color)){
+            return false;
+        }
+        //get all the pieces according to the given color in the parameter
+        List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+        
+        /*
+        The main idea is: if there is a movent that the king can do in order to scape from check, it means that
+        this isn't checkmate, but if there is no movement allowing that, so he got checkmated
+        */
+        for(Piece p : list){
+            boolean[][] mat = p.possibleMoves();
+           
+            for(int i = 0; i < board.getRows(); i++){
+                for(int j = 0; j < board.getColumns(); j++){
+                    if(mat[i][j]){
+                        Position source = ((ChessPiece)p).getChessPosition().toPosition();
+                        Position target = new Position(i, j);
+                        Piece capturedPiece = makeMove(source, target);
+                        
+                        boolean testCheck = testCheck(color);
+                        
+                        undoMove(source, target, capturedPiece);
+                        
+                        if(!testCheck){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }   
     
     private void placeNewPiece(char column, int row, ChessPiece piece){
         board.placePiece(piece, new ChessPosition(column, row).toPosition());
