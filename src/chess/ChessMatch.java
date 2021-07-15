@@ -92,7 +92,8 @@ public class ChessMatch {
     
     private Piece makeMove(Position source, Position target){
         //take the piece from the board
-        Piece p = board.removePiece(source); 
+        ChessPiece p = (ChessPiece) board.removePiece(source);
+        p.increaseMoveCount();
         
         //in case there is a piece on the target position, it'll be taken
         Piece capturedPiece = board.removePiece(target); 
@@ -110,7 +111,9 @@ public class ChessMatch {
     
     //The opposite logic of the method makeMove.
     private void undoMove(Position source, Position target, Piece capturedPiece){
-        Piece p = board.removePiece(target);
+        ChessPiece p = (ChessPiece) board.removePiece(target);
+        p.decreaseMoveCount();
+        
         board.placePiece(p, source);
         
         if(capturedPiece != null){
@@ -186,11 +189,7 @@ public class ChessMatch {
         List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
         
         /*
-<<<<<<< HEAD
         The main idea is: if there is a movement that the king can do in order to escape from check, it means that
-=======
-        The main idea is: if there is a movent that the king can do in order to scape from check, it means that
->>>>>>> b5cb4fa8b3bd0c742906e90ee72aaa69fe9f7707
         this isn't checkmate, but if there is no movement allowing that, so he got checkmated
         */
         for(Piece p : list){
