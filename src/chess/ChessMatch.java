@@ -95,19 +95,39 @@ public class ChessMatch {
     }
     
     private Piece makeMove(Position source, Position target){
-        //take the piece from the board
+        /*Take the piece from the board.
+          In case there is a piece on the target position, it'll be taken,
+          then I place mine there.
+        */
         ChessPiece p = (ChessPiece) board.removePiece(source);
         p.increaseMoveCount();
         
-        //in case there is a piece on the target position, it'll be taken
-        Piece capturedPiece = board.removePiece(target); 
-        
-        //then I place mine there.
+        Piece capturedPiece = board.removePiece(target);
         board.placePiece(p, target);
         
         if(capturedPiece != null){
             piecesOnTheBoard.remove(capturedPiece);
             capturedPieces.add(capturedPiece);
+        }
+        
+        //#Special move castling kingside rook
+        if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+            Position sourceT1 = new Position(source.getRow(), source.getColumn() + 3);
+            Position targetT1 = new Position(source.getRow(), source.getColumn() + 1);
+            
+            ChessPiece rook = (ChessPiece)board.removePiece(sourceT1);
+            board.placePiece(rook, targetT1);
+            rook.increaseMoveCount();
+        }
+        
+        //#Special move castling queenside rook
+        if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+            Position sourceT2 = new Position(source.getRow(), source.getColumn() - 4);
+            Position targetT2 = new Position(source.getRow(), source.getColumn() - 1);
+            
+            ChessPiece rook = (ChessPiece)board.removePiece(sourceT2);
+            board.placePiece(rook, targetT2);
+            rook.increaseMoveCount();
         }
         
         return capturedPiece;
@@ -124,6 +144,26 @@ public class ChessMatch {
             board.placePiece(capturedPiece, target);
             capturedPieces.remove(capturedPiece);
             piecesOnTheBoard.add(capturedPiece);
+        }
+        
+        //#Special move castling kingside rook --> UNDO MOVEMENT
+        if(p instanceof King && target.getColumn() == source.getColumn() + 2){
+            Position sourceT1 = new Position(source.getRow(), source.getColumn() + 3);
+            Position targetT1 = new Position(source.getRow(), source.getColumn() + 1);
+            
+            ChessPiece rook = (ChessPiece)board.removePiece(targetT1);
+            board.placePiece(rook, sourceT1);
+            rook.decreaseMoveCount();
+        }
+        
+        //#Special move castling queenside rook --> UNDO MOVEMENT
+        if(p instanceof King && target.getColumn() == source.getColumn() - 2){
+            Position sourceT2 = new Position(source.getRow(), source.getColumn() - 4);
+            Position targetT2 = new Position(source.getRow(), source.getColumn() - 1);
+            
+            ChessPiece rook = (ChessPiece)board.removePiece(targetT2);
+            board.placePiece(rook, sourceT2);
+            rook.decreaseMoveCount();
         }
     }
     
@@ -230,7 +270,7 @@ public class ChessMatch {
     private void initialSetup(){
         placeNewPiece('a', 1, new Rook(board, Color.WHITE));
         placeNewPiece('h', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
         placeNewPiece('a', 2, new Pawn(board, Color.WHITE));
         placeNewPiece('b', 2, new Pawn(board, Color.WHITE));
         placeNewPiece('c', 2, new Pawn(board, Color.WHITE));
@@ -247,7 +287,7 @@ public class ChessMatch {
 
         placeNewPiece('a', 8, new Rook(board, Color.BLACK));
         placeNewPiece('h', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 8, new King(board, Color.BLACK));
+        placeNewPiece('e', 8, new King(board, Color.BLACK, this));
         placeNewPiece('a', 7, new Pawn(board, Color.BLACK));
         placeNewPiece('b', 7, new Pawn(board, Color.BLACK));
         placeNewPiece('c', 7, new Pawn(board, Color.BLACK));
