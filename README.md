@@ -1,5 +1,5 @@
 # chess-system-java
-This is a project that I've made in a java course in order to accomplish better understanding in Oriented Object.
+This is a project that I've made in a java course in order to achieve better understanding of Oriented Object.
 The course is from Udemy plataform and was led by the software engineer [Nelio Alves](https://github.com/acenelio).
 
 ## Main topics
