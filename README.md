@@ -1,6 +1,6 @@
 # chess-system-java
 This is a project that I've made in a java course in order to achieve better understanding of Oriented Object.
-The course is from Udemy plataform and was led by the software engineer [Nelio Alves](https://github.com/acenelio).
+The course is from Udemy plataform and was led by the software engineer Nelio Alves
 
 ## Main topics
 These are some of the topics learned and applied in this project.
